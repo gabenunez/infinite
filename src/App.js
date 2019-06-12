@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Item from './components/item';
 import axios from 'axios';
+import CBuffer from 'CBuffer';
 import './App.css';
 
 
@@ -14,7 +15,6 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-
     window.onscroll = () => {
       // Checks that the page has scrolled to the bottom
       if (
@@ -35,18 +35,20 @@ class App extends Component {
       isLoading: true
     })
 
-    axios.get('https://randomuser.me/api/?results=50')
+    axios.get('https://randomuser.me/api/?results=30')
       .then((response) => {
-        // handle success
+
         this.setState({
           isLoading: false
         })
+        
+        // Create circular buffer and bring together user state and results.
+        const dataBuffer = new CBuffer(300);
+        dataBuffer.push(...this.state.users, ...response.data.results)
 
         this.setState({
-          users: [...this.state.users, ...response.data.results]
+          users: dataBuffer.toArray()
         })
-
-        console.log(this.state.users)
       })
       .catch((error) => {
         console.error(error);
@@ -58,11 +60,24 @@ class App extends Component {
   }
 
   render() {
-      return (
-        <div className="App">
-          {this.state.users.map((user) => <p key={user.login.uuid}>{user.name.title} {user.name.first} {user.name.last}</p>)}
-          {this.state.isLoading && <h3>Loading...</h3>}
-        </div>
+    const {users, isLoading} = this.state;
+    return (
+      <>
+      <div className="cards">
+        {
+          users.map((user) => {
+            return (
+              <Item
+                key={user.login.uuid}
+                name={`${user.name.first} ${user.name.last}`} 
+                img={user.picture.large}
+              />
+            )
+        })
+        }
+      </div>
+      {isLoading && <h3 className='loading'>Loading...</h3>}
+      </>
     );
   }
 }
