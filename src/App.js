@@ -18,7 +18,8 @@ class App extends Component {
     window.onscroll = () => {
       // Checks that the page has scrolled to the bottom
       if (
-        window.innerHeight + document.documentElement.scrollTop
+        // either pageYOffset or documentElement.scrolTop for compatibility
+        window.innerHeight + window.pageYOffset || document.documentElement.scrollTop
         === document.documentElement.offsetHeight
       ) {
         this.fetchUsers();
