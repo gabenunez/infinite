@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "CBuffer": "^2.0.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "circular-buffer": "^1.0.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
